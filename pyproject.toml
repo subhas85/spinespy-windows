@@ -1,0 +1,27 @@
+[project]
+name = "spinespy-win"
+version = "0.1.0"
+description = "Posture monitor for Windows 11 (system tray, local-only)"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "opencv-python>=4.8.0",
+    "mediapipe>=0.10.0",
+    "numpy>=1.26",
+    "pystray>=0.19.5",
+    "Pillow>=10.0",
+    "windows-toasts>=1.1.0",
+    "just_playback>=0.1.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+spinespy = "spinespy_win.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
