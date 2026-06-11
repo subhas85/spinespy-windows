@@ -17,21 +17,29 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
+        shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install -e .
           pip install pyinstaller pytest
+          python -c "import mediapipe, cv2, numpy, PIL; print('deps OK')"
 
       - name: Run unit tests
+        shell: bash
         run: pytest -v
 
       - name: Fetch pose model
+        shell: bash
         run: |
-          New-Item -ItemType Directory -Force -Path assets | Out-Null
+          mkdir -p assets
           curl -L -o assets/pose_landmarker.task "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
 
       - name: PyInstaller build
-        run: pyinstaller packaging/spinespy.spec --noconfirm --distpath dist --workpath build
+        shell: bash
+        run: |
+          pyinstaller packaging/spinespy.spec --noconfirm --distpath dist --workpath build
+          test -f "dist/SpineSpy/SpineSpy.exe" || { echo "exe missing"; exit 1; }
+          du -sh dist/SpineSpy
 
       - name: Inno Setup compile
         run: |
