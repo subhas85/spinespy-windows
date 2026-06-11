@@ -105,7 +105,7 @@ assets/
 
 **`updater.py`**
 - `__version__` compared against the latest GitHub Release tag.
-- `check() -> UpdateInfo | None` — GET `https://api.github.com/repos/<owner>/spinespy-windows/releases/latest`, parse `tag_name` (strip leading `v`), semver-compare; return the installer asset URL if newer. Timeouts short (5 s), all exceptions swallowed to `None`.
+- `check() -> UpdateInfo | None` — GET `https://api.github.com/repos/subhas85/spinespy-windows/releases/latest`, parse `tag_name` (strip leading `v`), semver-compare; return the installer asset URL if newer. Timeouts short (5 s), all exceptions swallowed to `None`.
 - `download_and_launch(update_info)` — stream the `SpineSpy-Setup.exe` asset to `%TEMP%`, then `os.startfile()` it (Inno installer relaunches/replaces the running app). The running app quits after launching the installer.
 - Update check runs once at startup and then daily; can be disabled (a config flag `update_check_enabled`, default True). No image or usage data is ever sent — only an unauthenticated GET to the releases endpoint.
 
@@ -270,7 +270,7 @@ Explicitly **removed** vs upstream: `ultralytics`, `torch`, `torchvision`, `rump
 
 - Phone-distraction detection (would reintroduce a heavy model — deferred, possibly via a lightweight MediaPipe object detector later).
 - Persistent posture stats/history (conflicts with the no-storage stance unless explicitly opt-in).
-- Code signing the installer (removes SmartScreen warning; needs a cert — note for a later release).
+- **Code signing the installer.** *Decision (2026-06-10): ship unsigned until mass adoption.* Initial releases are unsigned — Windows SmartScreen will warn on first install (users click "More info → Run anyway"); this is acceptable for the personal/early-adopter stage. When adoption justifies it, adopt **Azure Artifact Signing** (formerly Trusted Signing, ~US$9.99/mo): individual developers in Canada are eligible, it needs **no hardware token**, so it drops straight into the GitHub Actions release job without breaking the automated pipeline. Avoid EV/hardware-token certs — since ~April 2026 Microsoft has been phasing out the EV "instant SmartScreen reputation" benefit, so *every* cert now earns reputation gradually over downloads rather than clearing the warning on day one; that removes the reason to pay EV prices. The installer/CI design in §7 already isolates signing as a single optional step, so adding it later is additive, not a rework.
 
 ---
 
